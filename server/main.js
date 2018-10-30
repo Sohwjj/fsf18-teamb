@@ -219,14 +219,17 @@ app.post(API_URI + '/changePassword', auth.required, bodyParser.urlencoded({ ext
             } else {
                 console.log("Fail. Current password incorrect. result =>", result);
                 res.status(500).json({ result: "Fail. Current password incorrect." });
+                return;
             }
         } else {
             console.log("Fail. No record found. result =>", result);
             res.status(500).json({ result: "Fail. No record found." });
+            return;
         }
     }).catch((error) => {
         console.log(error);
         res.status(500).json(error);
+        return;
     })
 
 
