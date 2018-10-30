@@ -42,3 +42,4 @@ Thumbs.db
 server/node_modules
 server/.env
 
+package-lock.json

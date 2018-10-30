@@ -46,6 +46,7 @@ export class ChangePasswordComponent implements OnInit {
     ///first hash to the server side
     this.securitySvc.changePassword(updateUser).subscribe((result)=>{
       console.log(result);
+      this.securitySvc.logout(); //force logout
       this.router.navigate(['/Login']);
       let snackBarRef = this.snackSvc.open("Password Updated. Please Log In Again!", 'Done', {
         duration: 3000
