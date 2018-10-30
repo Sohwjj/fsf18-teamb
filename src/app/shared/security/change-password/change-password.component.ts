@@ -40,7 +40,7 @@ export class ChangePasswordComponent implements OnInit {
       id: this.securitySvc.getCurrentUser().id,
       email: this.securitySvc.getCurrentUser().email,
       password: this.changePasswordForm.value.currentPassword,
-      newpassword: this.changePasswordForm.value.currentPassword.confirmPassword
+      newpassword: confirmPassword
     }
     console.log(this.changePasswordForm);
     ///first hash to the server side
