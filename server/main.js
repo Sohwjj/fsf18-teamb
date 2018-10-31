@@ -207,6 +207,41 @@ app.post(API_URI + '/changePassword', auth.required, bodyParser.urlencoded({ ext
     changePasswordObj.newpassword = convertSecObj.hash;
     changePasswordObj.salt = convertSecObj.salt;
 
+    // Additional validation on server side
+
+    // Prevent empty password
+    /*
+    if (changePasswordObj.newpassword.length == 0) {
+        console.log("Fail. New password cannot be empty.");
+        res.status(500).json({ result: "Fail. New password cannot be empty." });
+        return;
+    }
+
+    // Prevent empty password
+    if (changePasswordObj.password.length == 0) {
+        console.log("Fail. Current password cannot be empty.");
+        res.status(500).json({ result: "Fail. Current password cannot be empty." });
+        return;
+    }
+
+    const regex = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{12,}$/;
+    let m;
+
+    // Prevent invalid password
+    if ((m = regex.exec(changePasswordObj.password)) === null) {
+        console.log("Fail. Current password failed validation.");
+        res.status(500).json({ result: "Fail. Current password failed validation." });
+        return;
+    }
+
+    // Prevent invalid password
+    if ((m = regex.exec(changePasswordObj.newpassword)) === null) {
+        console.log("Fail. New password failed validation.");
+        res.status(500).json({ result: "Fail. New password failed validation." });
+        return;
+    }
+    */
+
     // Check old password is valid.
     // To protect against the scenario where user is already logged in, but someone else use his account and tries to change password.
     let oldPassword = changePasswordObj.password;
@@ -216,6 +251,18 @@ app.post(API_URI + '/changePassword', auth.required, bodyParser.urlencoded({ ext
         if (result.length > 0) {
             if (isPasswordValid(oldPassword, result[0].password, result[0].salt)) {
                 console.log("ITS MATCH !");
+                // Set the new password to password field.
+                changePasswordObj.password = changePasswordObj.newpassword;
+                // "UPDATE user SET password = ? , salt = ? WHERE id = ?"
+                updateUserPassword([changePasswordObj.password,
+                changePasswordObj.salt,
+                changePasswordObj.id]).then((results) => {
+                    console.log("Success! results =>", results);
+                    res.status(200).json({ result: "Success!" });
+                }).catch((error) => {
+                    console.log("Error! error =>", error);
+                    res.status(500).json(error);
+                });
             } else {
                 console.log("Fail. Current password incorrect. result =>", result);
                 res.status(500).json({ result: "Fail. Current password incorrect." });
@@ -231,20 +278,6 @@ app.post(API_URI + '/changePassword', auth.required, bodyParser.urlencoded({ ext
         res.status(500).json(error);
         return;
     })
-
-
-    // Set the new password to password field.
-    changePasswordObj.password = changePasswordObj.newpassword;
-    // "UPDATE user SET password = ? , salt = ? WHERE id = ?"
-    updateUserPassword([changePasswordObj.password,
-    changePasswordObj.salt,
-    changePasswordObj.id]).then((results) => {
-        console.log("Success! results =>", results);
-        res.status(200).json({ result: "Success!" });
-    }).catch((error) => {
-        console.log("Error! error =>", error);
-        res.status(500).json(error);
-    });
 })
 
 app.post(API_URI + '/resetPassword', (req, res) => {
