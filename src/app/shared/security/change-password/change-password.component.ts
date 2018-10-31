@@ -48,10 +48,14 @@ export class ChangePasswordComponent implements OnInit {
     //console.log("Validator  : ", this.changePasswordForm.validator);
     ///first hash to the server side
     if (this.changePasswordForm.controls['confirmPassword'].hasError('MatchPassword')) {  //mismatch
-      let snackBarRef = this.snackSvc.open("Password mismatch. Please try Again!", 'Done', {
+      let snackBarRef = this.snackSvc.open("Password mismatch or empty. Please try Again!", 'Done', {
         duration: 5000
       });
       //if still fail, may want to try to reset the change password form
+    } else if (this.changePasswordForm.get("confirmPassword").value.length == 0) {
+      let snackBarRef = this.snackSvc.open("Password empty. Please try Again!", 'Done', {
+        duration: 5000
+      });
     } else {
       this.securitySvc.changePassword(updateUser).subscribe((result) => {
         console.log(result);
